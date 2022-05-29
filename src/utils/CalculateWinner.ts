@@ -23,7 +23,7 @@ export default function calculateWinner(cells) {
 
     // Si nadie ha ganado aún, pero hay al menos una celda vacía, significa que se puede seguir jugando y por lo tanto retorna null
     for (let cell of cells) {
-        if (!cell) return null;
+        if (cell === null) return null;
     }
 
     // Si nadie ha ganado y además el tablero está lleno, significa que hubo empate

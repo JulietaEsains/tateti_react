@@ -9,6 +9,7 @@ body {
     display: flex;
     justify-content: center;
     background-color: #272727;
+    color: #fff;
 }
 
 h1 {
@@ -65,7 +66,19 @@ input {
 }
   
 .game {
-    display: flex;
-    flex-direction: row;
     margin-bottom: 30px;
+}
+
+.reloadContainer {
+    display: flex;
+    justify-content: center;
+}
+
+#reload {
+    text-decoration: none;
+    color: #272727;
+    font-weight: medium;
+    background-color: rgb(148, 243, 247);
+    padding: 10px;
+    border-radius: 5px;
 }
