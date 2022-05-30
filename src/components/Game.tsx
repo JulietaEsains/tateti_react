@@ -1,12 +1,17 @@
+import axios from "axios";
 import { useState } from "react";
 import Info from "./Info.tsx";
 import Board from "./Board.tsx";
+import Button from "./Button.tsx";
 import calculateWinner from "../utils/CalculateWinner.ts";
+
+const backendUrl = "http://localhost:3000/";
 
 export default function Game() {
     // Estado inicial del juego
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
+    const [gameStarted, setGameStarted] = useState(false);
 
     const handleCellClick = (i) => {
         const currentCells = cells.slice();
@@ -39,19 +44,14 @@ export default function Game() {
                 onCellClick = {handleCellClick}
             />
         </div>
-        
-        { /* Botón para recargar la página, es decir reiniciar el juego */}
-        <div className = "reloadContainer">
-
-            <a 
-                href = "http://localhost:3000/"
-                id = "reload"
-            >
-                Reiniciar
-            </a>
-
+        <div className="btns-container">
+            <Button 
+                value = "Nueva partida"
+            />
+            <Button 
+                value = "Unirse a partida"
+            />
         </div>
-        
         </>
     );
 }

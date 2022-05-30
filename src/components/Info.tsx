@@ -1,25 +1,23 @@
-// Muestra los nombres de los jugadores y el estado del juego
-
 import { useEffect, useState } from "react";
 import calculateWinner from "../utils/CalculateWinner.ts";
-import Player from "./Player.tsx";
+import Input from "./Input.tsx";
 
 export default function Info(props) {
     // Info inicial
-    const [nameX, setNameX] = useState('');
-    const [nameO, setNameO] = useState('');
+    const [name, setName] = useState('');
+    const [accessToken, setAccessToken] = useState('');
     const [status, setStatus] = useState('');
 
     // Cambio en los input de cada jugador
-    const handleXChange = (event) => {
-        setNameX(event.target.value); 
+    const handleNameChange = (event) => {
+        setName(event.target.value); 
     } 
-    const handleOChange = (event) => {
-        setNameO(event.target.value); 
+    const handleAccessTokenChange = (event) => {
+        setAccessToken(event.target.value); 
     } 
 
     // Actualiza el estado del juego
-    useEffect(() => {
+    /* useEffect(() => {
         let newStatus;
 
         // En cada renderización averiguamos si alguien ganó, si hay empate o si se sigue jugando
@@ -40,30 +38,34 @@ export default function Info(props) {
         }
 
         setStatus(newStatus);
-    });
+    }); */
 
     return (
         <div>
-            <div className = "players">
+            <div className = "info">
                 <form autoComplete = "off">
                     <label>
-                        Nombre del jugador X:
-                        <Player
-                            name = "nameX"
-                            value = {nameX}
-                            onChange = {handleXChange}
+                        Tu nombre:
+                        <Input
+                            name = "name"
+                            value = {name}
+                            onChange = {handleNameChange}
                         />
                     </label>
                     <br />
                     <label>
-                        Nombre del jugador O:
-                        <Player
-                            name = "nameO"
-                            value = {nameO}
-                            onChange = {handleOChange}
+                        Token de acceso:
+                        <Input
+                            name = "accessToken"
+                            value = {accessToken}
+                            onChange = {handleAccessTokenChange}
                         />
                  </label>
                 </form>
+                <div className="current-game">
+                    <h3>Partida actual</h3>
+                    <p>Token de acceso:</p>
+                </div>
             </div>
             <div className = "status">
                 {status}

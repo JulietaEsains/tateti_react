@@ -1,6 +1,4 @@
-// Input donde el jugador se identifica
-
-export default function Player(props) {
+export default function Input(props) {
     return (
         <div>
             <input

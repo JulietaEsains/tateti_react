@@ -13,8 +13,13 @@ body {
 }
 
 h1 {
-    margin: 15px 0;
+    margin: 5px 0;
     text-align: center;
+    color: rgb(148, 243, 247);
+}
+
+h3 {
+    margin: 10px 0;
     color: rgb(148, 243, 247);
 }
 
@@ -26,7 +31,7 @@ input {
     color: #fff;
 }
 
-.players {
+.info {
     margin-bottom: 30px;
 }
 
@@ -46,12 +51,12 @@ input {
     font-size: 24px;
     font-weight: bold;
     line-height: 34px;
-    height: 100px;
+    height: 80px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 100px;
+    width: 80px;
     background: #272727;
     cursor: pointer;
     color: rgb(235, 234, 234);
@@ -69,16 +74,21 @@ input {
     margin-bottom: 30px;
 }
 
-.reloadContainer {
+.btns-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
 }
 
-#reload {
-    text-decoration: none;
+.btn {
     color: #272727;
     font-weight: medium;
     background-color: rgb(148, 243, 247);
     padding: 10px;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    color: rgb(148, 243, 247);
+    background-color: #272727;
 }
