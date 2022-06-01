@@ -5,36 +5,68 @@ import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/CalculateWinner.ts";
 
-const backendUrl = "http://localhost:3000/";
-
 export default function Game() {
-    // Estado inicial del juego
+    const [gameStarted, setGameStarted] = useState(false);
+    const [currentPlayersName, setCurrentPlayersName] = useState('');
+    const [accessTokenInput, setAccessTokenInput] = useState('');
+    const [accessTokenOutput, setAccessTokenOutput] = useState('');
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
-    const [gameStarted, setGameStarted] = useState(false);
 
-    const handleCellClick = (i) => {
-        const currentCells = cells.slice();
-
-        // No se puede clickear sobre una celda si el juego ha terminado (termina cuando calculateWinner encuentra a un ganador o cuando detecta empate) o si ya tiene texto 
-        if (calculateWinner(currentCells) || currentCells[i]) { 
+    const handleNewGameClick = () => {
+        if (!currentPlayersName) {
+            alert('Por favor ingresa tu nombre para empezar una partida.');
             return;
         }
         
-        // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al turno
-        currentCells[i] = xIsNext ? 'X' : 'O';
+        setGameStarted(true);
+        setAccessTokenOutput('falta agregar petición al backend');
+    }
 
-        // Se actualiza el estado del tablero 
-        setCells(currentCells);
+    const handleJoinGameClick = () => {
+        if (!currentPlayersName || !accessTokenInput) {
+            alert('Por favor ingresa tu nombre y un token de acceso para unirte a una partida.');
+            return;
+        }
+    }
 
-        // Se cambia de turno
-        setXIsNext(!xIsNext)
+    const handleCurrentPlayersNameChange = (event) => {
+        setCurrentPlayersName(event.target.value); 
+    } 
+
+    const handleAccessTokenInputChange = (event) => {
+        setAccessTokenInput(event.target.value); 
+    } 
+
+    const handleCellClick = (i) => {
+        if (gameStarted) {
+            const currentCells = cells.slice();
+
+            // No se puede clickear sobre una celda si el juego ha terminado (termina cuando calculateWinner encuentra a un ganador o cuando detecta empate) o si ya tiene texto 
+            if (calculateWinner(currentCells) ||    currentCells[i]) { 
+                return;
+            }
+        
+            // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al turno
+            currentCells[i] = xIsNext ? 'X' : 'O';
+
+            // Se actualiza el estado del tablero 
+            setCells(currentCells);
+
+            // Se cambia de turno
+            setXIsNext(!xIsNext)
+        }
     }
     
     return (
         <><h1>TA TE TI</h1>
         <div className="game">
             <Info 
+                currentPlayersName = {currentPlayersName}
+                onCurrentPlayersNameChange = {handleCurrentPlayersNameChange}
+                accessTokenInput = {accessTokenInput}
+                onAccessTokenInputChange = {handleAccessTokenInputChange}
+                accessTokenOutput = {accessTokenOutput}
                 cells = {cells}
                 xIsNext = {xIsNext}
             />
@@ -47,9 +79,11 @@ export default function Game() {
         <div className="btns-container">
             <Button 
                 value = "Nueva partida"
+                onClick = {handleNewGameClick}
             />
             <Button 
                 value = "Unirse a partida"
+                onClick = {handleJoinGameClick}
             />
         </div>
         </>

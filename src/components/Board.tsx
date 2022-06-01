@@ -14,7 +14,7 @@ export default function Board(props) {
     } 
     
     return (
-        <div>
+        <div className = "board">
             <div className = "board-row">
                 {renderCell(0)}
                 {renderCell(1)}

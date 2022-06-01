@@ -3,21 +3,10 @@ import calculateWinner from "../utils/CalculateWinner.ts";
 import Input from "./Input.tsx";
 
 export default function Info(props) {
-    // Info inicial
-    const [name, setName] = useState('');
-    const [accessToken, setAccessToken] = useState('');
     const [status, setStatus] = useState('');
+    const [otherPlayersName, setOtherPlayersName] = useState('');
 
-    // Cambio en los input de cada jugador
-    const handleNameChange = (event) => {
-        setName(event.target.value); 
-    } 
-    const handleAccessTokenChange = (event) => {
-        setAccessToken(event.target.value); 
-    } 
-
-    // Actualiza el estado del juego
-    /* useEffect(() => {
+    useEffect(() => {
         let newStatus;
 
         // En cada renderización averiguamos si alguien ganó, si hay empate o si se sigue jugando
@@ -27,18 +16,18 @@ export default function Info(props) {
         if (winner) {
             // Si el ganador es X, muestra "Ganador: X (nombreX)"
             if (winner === 'X') {
-                newStatus = 'Ganador: X ('+ nameX +')'
+                newStatus = 'Ganador: X ('+ 'nameX' +')'
             } else if (winner === 'O') {
                 // Si el ganador es O, muestra "Ganador: O (nombreO)"
-                newStatus = 'Ganador: O ('+ nameO +')'
+                newStatus = 'Ganador: O ('+ 'nameO' +')'
             } else newStatus = 'Ganador: '+ winner;
         } else {
             // Si es el turno de X, muestra "Próximo jugador: X (nombreX)", sino "Próximo jugador: O (nombreO)"
-            newStatus = 'Próximo jugador: ' + (props.xIsNext ? 'X (' + nameX + ')' : 'O (' + nameO + ')');
+            newStatus = 'Próximo jugador: ' + (props.xIsNext ? 'X (' + 'nameX' + ')' : 'O (' + 'nameO' + ')');
         }
 
         setStatus(newStatus);
-    }); */
+    }, []); 
 
     return (
         <div>
@@ -47,24 +36,29 @@ export default function Info(props) {
                     <label>
                         Tu nombre:
                         <Input
-                            name = "name"
-                            value = {name}
-                            onChange = {handleNameChange}
+                            name = "currentPlayersName"
+                            value = {props.currentPlayersName}
+                            onChange = {props.onCurrentPlayersNameChange}
                         />
                     </label>
                     <br />
                     <label>
                         Token de acceso:
                         <Input
-                            name = "accessToken"
-                            value = {accessToken}
-                            onChange = {handleAccessTokenChange}
+                            name = "accessTokenInput"
+                            value = {props.accessTokenInput}
+                            onChange = {props.onAccessTokenInputChange}
                         />
                  </label>
                 </form>
                 <div className="current-game">
                     <h3>Partida actual</h3>
-                    <p>Token de acceso:</p>
+                    <p>
+                        Token de acceso:
+                        <br />
+                        <br /> 
+                        {props.accessTokenOutput}
+                    </p>
                 </div>
             </div>
             <div className = "status">
