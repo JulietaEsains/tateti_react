@@ -7,20 +7,21 @@ import calculateWinner from "../utils/CalculateWinner.ts";
 
 export default function Game() {
     const [gameStarted, setGameStarted] = useState(false);
-    const [currentPlayersName, setCurrentPlayersName] = useState('');
-    const [accessTokenInput, setAccessTokenInput] = useState('');
-    const [accessTokenOutput, setAccessTokenOutput] = useState('');
+    const [currentPlayersEmail, setCurrentPlayersEmail] = useState('');
+    const [playersPassword, setPlayersPassword] = useState('');
+    const [gameNumberInput, setGameNumberInput] = useState('');
+    const [gameNumberOutput, setGameNumberOutput] = useState('');
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
 
     const handleNewGameClick = () => {
-        if (!currentPlayersName) {
-            alert('Por favor ingresa tu nombre para empezar una partida.');
+        if (!currentPlayersEmail || !playersPassword) {
+            alert('Por favor ingresa tu email y tu contraseña para empezar una partida.');
             return;
         }
         
         setGameStarted(true);
-        setAccessTokenOutput('falta agregar petición al backend');
+        setGameNumberOutput('falta agregar petición al backend');
     }
 
     const handleJoinGameClick = () => {

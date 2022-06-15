@@ -26,7 +26,7 @@ h3 {
 input {
     font: 14px "Montserrat", Futura,  sans-serif;
     width: 100%;
-    margin-top: 10px;
+    margin: 10px 0px;
     background-color: #272727;
     color: #fff;
 }
@@ -74,9 +74,14 @@ input {
     margin-bottom: 30px;
 }
 
-.btns-container {
+.btns-container,
+.links-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+}
+
+.btn-confirm {
+    margin-top: 10px;
 }
 
 .btn {
@@ -91,4 +96,25 @@ input {
 .btn:hover {
     color: rgb(148, 243, 247);
     background-color: #272727;
+}
+
+.link {
+    color: #272727;
+    font-weight: medium;
+    background-color: rgb(148, 243, 247);
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin: 25px;
+}
+
+.link:hover {
+    color: rgb(148, 243, 247);
+    background-color: #272727;
+}
+
+.user-form {
+    display: flex;
+    justify-content: center;
+    align-content: center;
 }
