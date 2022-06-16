@@ -11,6 +11,9 @@ export const StateLoggedInRoute: FC<PropType> = ({component: Component}) => {
   
     const isAuthenticated  = token !== undefined;
   
-    if (isAuthenticated) return <Component />
-    return <Navigate to='/' />
+    if (isAuthenticated) return <Component />;
+
+    // else
+    alert("Debes iniciar sesión con un usuario válido para poder jugar.");
+    return <Navigate to='/' />;
 }

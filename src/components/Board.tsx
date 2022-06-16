@@ -1,5 +1,3 @@
-// Tablero
-
 import Cell from "./Cell.tsx";
 
 export default function Board(props) {

@@ -3,8 +3,8 @@ import calculateWinner from "../utils/calculateWinner.ts";
 import Input from "./Input.tsx";
 
 export default function Info(props) {
-    const [status, setStatus] = useState('');
-    const [otherPlayersName, setOtherPlayersName] = useState('');
+    const [status, setStatus] = useState("");
+    const [otherPlayersUsername, setOtherPlayersUsername] = useState("");
 
     useEffect(() => {
         let newStatus;
@@ -34,30 +34,18 @@ export default function Info(props) {
             <div className = "info">
                 <form autoComplete = "off">
                     <label>
-                        Tu nombre:
+                        Número de partida:
                         <Input
-                            name = "currentPlayersName"
-                            value = {props.currentPlayersName}
-                            onChange = {props.onCurrentPlayersNameChange}
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        Token de acceso:
-                        <Input
-                            name = "accessTokenInput"
-                            value = {props.accessTokenInput}
-                            onChange = {props.onAccessTokenInputChange}
+                            name = "gameNumberInput"
+                            value = {props.gameNumberInput}
+                            onChange = {props.onGameNumberInputChange}
                         />
                  </label>
                 </form>
                 <div className="current-game">
                     <h3>Partida actual</h3>
                     <p>
-                        Token de acceso:
-                        <br />
-                        <br /> 
-                        {props.accessTokenOutput}
+                        Número de partida: {props.gameNumberOutput}
                     </p>
                 </div>
             </div>

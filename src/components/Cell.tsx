@@ -1,5 +1,3 @@
-// Cada celda o cuadrado del tablero
-
 export default function Cell(props) {
     return (
         <button

@@ -53,14 +53,19 @@ export async function reloadCurrentUser(email: string, password: string): Promis
         password: password
       }
     })).data as User
+
     localStorage.setItem("user", JSON.stringify(res));
     updateSessionUser(res);
+
     return res;
+
   } catch (err) {
     const axiosError = err as AxiosError
+
     if (axiosError.response && axiosError.response.status === 401) {
       void logout()
     }
+    
     throw err
   }
 }
@@ -91,6 +96,7 @@ export async function login(email: string, password: string): Promise<Token> {
 
   setCurrentToken(res.token);
   updateSessionToken(res.token);
+  alert("Sesión iniciada, ahora podés jugar.");
   void reloadCurrentUser(email, password).then()
   return res;
 }

@@ -1,43 +1,31 @@
-import axios from "axios";
 import { useState } from "react";
 import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
+import { newGame } from "../utils/gameServices.ts";
 
 export default function Game() {
     const [gameStarted, setGameStarted] = useState(false);
-    const [currentPlayersEmail, setCurrentPlayersEmail] = useState('');
-    const [playersPassword, setPlayersPassword] = useState('');
-    const [gameNumberInput, setGameNumberInput] = useState('');
-    const [gameNumberOutput, setGameNumberOutput] = useState('');
+    const [gameNumberInput, setGameNumberInput] = useState("");
+    const [gameNumberOutput, setGameNumberOutput] = useState("");
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
 
     const handleNewGameClick = () => {
-        if (!currentPlayersEmail || !playersPassword) {
-            alert('Por favor ingresa tu email y tu contraseña para empezar una partida.');
-            return;
-        }
-        
         setGameStarted(true);
-        setGameNumberOutput('falta agregar petición al backend');
+
+        newGame().then(function (response) {
+            setGameNumberOutput(response.game.id);
+        });
     }
 
     const handleJoinGameClick = () => {
-        if (!currentPlayersName || !accessTokenInput) {
-            alert('Por favor ingresa tu nombre y un token de acceso para unirte a una partida.');
+        if (!gameNumberInput) {
+            alert("Por favor ingresa un número de partida para unirte a una.");
             return;
         }
     }
-
-    const handleCurrentPlayersNameChange = (event) => {
-        setCurrentPlayersName(event.target.value); 
-    } 
-
-    const handleAccessTokenInputChange = (event) => {
-        setAccessTokenInput(event.target.value); 
-    } 
 
     const handleCellClick = (i) => {
         if (gameStarted) {
@@ -63,11 +51,9 @@ export default function Game() {
         <><h1>TA TE TI</h1>
         <div className="game">
             <Info 
-                currentPlayersName = {currentPlayersName}
-                onCurrentPlayersNameChange = {handleCurrentPlayersNameChange}
-                accessTokenInput = {accessTokenInput}
-                onAccessTokenInputChange = {handleAccessTokenInputChange}
-                accessTokenOutput = {accessTokenOutput}
+                gameNumberInput = {gameNumberInput}
+                onGameNumberInputChange = {(event) => setGameNumberInput(event.target.value)}
+                gameNumberOutput = {gameNumberOutput}
                 cells = {cells}
                 xIsNext = {xIsNext}
             />

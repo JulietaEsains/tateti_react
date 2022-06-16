@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 import { Subject } from "rxjs"
+import { Game } from "./gameServices.ts";
 import { User } from "./userServices.ts";
 
 // USUARIO
@@ -56,4 +57,27 @@ export function updateSessionToken(token: string) {
 export function cleanupSessionToken() {
   currentToken = undefined;
   tokenSubject.next(currentToken);
+}
+
+// PARTIDA
+
+let currentGame: Game | undefined;
+
+const gameSubject = new Subject<Game | undefined>();
+
+export function useSessionGame() {
+  const [game, setGame] = useState(currentGame);
+
+  useLayoutEffect(() => {
+    gameSubject.subscribe((newState) => {
+      setGame(newState);
+    });
+  }, []);
+
+  return game;
+}
+
+export function updateSessionGame(game: Game) {
+  currentGame = game;
+  gameSubject.next(currentGame);
 }

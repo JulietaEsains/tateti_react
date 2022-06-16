@@ -32,7 +32,7 @@ input {
 }
 
 .info {
-    margin-bottom: 40px;
+    margin-bottom: 10px;
 }
 
 .board-row:after {
@@ -72,12 +72,15 @@ input {
   
 .game {
     margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
 }
 
 .btns-container,
 .links-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
 }
 
 .btn-confirm {
@@ -111,6 +114,7 @@ input {
 .link:hover {
     color: rgb(148, 243, 247);
     background-color: #272727;
+    outline: .1px solid rgb(148, 243, 247);
 }
 
 .user-form {
