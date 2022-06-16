@@ -1,33 +1,23 @@
 import { useState } from "react";
-import createUser from "../utils/backendServices.ts";
+import { createUser } from "../utils/userServices.ts";
 import Button from "./Button.tsx";
 import Input from "./Input.tsx";
 
 export default function Register() {
-    const [name, setName] = useState('');
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const handleNameChange = (event) => {
-        setName(event.target.value);
-    }
-
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value);
-    }
-
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    }
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    }
-
-    const handleRegistration = (event) => {
+    const handleRegistration = async (event) => {
         event.preventDefault();
-        createUser(name, username, email, password);
+
+        if (!name || !username || !email || !password) {
+            alert("Por favor completar todos los campos.");
+            return;
+        }
+
+        await createUser(name, username, email, password);
     }
 
     return(
@@ -38,7 +28,7 @@ export default function Register() {
                         name = "name"
                         type = "text"
                         value = {name}
-                        onChange = {handleNameChange}
+                        onChange = {(event) => setName(event.target.value)}
                     />
                 </label>
                 <br />
@@ -47,7 +37,7 @@ export default function Register() {
                         name = "username"
                         type = "text"
                         value = {username}
-                        onChange = {handleUsernameChange}
+                        onChange = {(event) => setUsername(event.target.value)}
                     />
                 </label>
                 <br />
@@ -56,7 +46,7 @@ export default function Register() {
                         name = "email"
                         type = "email"
                         value = {email}
-                        onChange = {handleEmailChange}
+                        onChange = {(event) => setEmail(event.target.value)}
                     />
                 </label>
                 <br />
@@ -65,7 +55,7 @@ export default function Register() {
                         name = "password"
                         type = "password"
                         value = {password}
-                        onChange = {handlePasswordChange}
+                        onChange = {(event) => setPassword(event.target.value)}
                     />
                 </label>
 
