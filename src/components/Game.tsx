@@ -3,7 +3,7 @@ import { useState } from "react";
 import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
-import calculateWinner from "../utils/CalculateWinner.ts";
+import calculateWinner from "../utils/calculateWinner.ts";
 
 export default function Game() {
     const [gameStarted, setGameStarted] = useState(false);

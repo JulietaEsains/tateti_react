@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import calculateWinner from "../utils/CalculateWinner.ts";
+import calculateWinner from "../utils/calculateWinner.ts";
 import Input from "./Input.tsx";
 
 export default function Info(props) {
