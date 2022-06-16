@@ -1,0 +1,107 @@
+import axios, { AxiosError } from "axios";
+import { cleanupSessionToken, cleanupSessionUser, updateSessionToken, updateSessionUser } from "./store.ts";
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+axios.defaults.headers.common["Content-Type"] = "application/json"
+
+const backendUrl = "http://localhost:3000";
+
+export interface Token {
+  token: string
+}
+
+export interface User {
+  id: string
+  name: string
+  username: string
+  email: string
+  password: string
+}
+
+// Valores almacenados en LOCAL STORE
+function getCurrentToken(): string | undefined {
+  const result = localStorage.getItem("token");
+  return result ? result : undefined;
+}
+
+function setCurrentToken(token: string) {
+  localStorage.setItem("token", token)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  axios.defaults.headers.common.Authorization = "bearer " + token
+}
+
+function getCurrentUser(): User | undefined {
+  return localStorage.getItem("user") as unknown as User
+}
+
+export async function logout(): Promise<void> {
+  localStorage.removeItem("token")
+  localStorage.removeItem("user")
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  axios.defaults.headers.common.Authorization = ""
+
+  cleanupSessionToken()
+  cleanupSessionUser()
+}
+
+export async function reloadCurrentUser(email: string, password: string): Promise<User> {
+  try {
+    const res = (await axios.get(backendUrl + "/users", {
+      params: {
+        email: email,
+        password: password
+      }
+    })).data as User
+    localStorage.setItem("user", JSON.stringify(res));
+    updateSessionUser(res);
+    return res;
+  } catch (err) {
+    const axiosError = err as AxiosError
+    if (axiosError.response && axiosError.response.status === 401) {
+      void logout()
+    }
+    throw err
+  }
+}
+
+export async function createUser(name: string, username: string, email: string, password: string) {
+    await axios.post(backendUrl + "/users", {
+      name: name,
+      username: username,
+      email: email,
+      password: password
+    })
+    .then(function (response) {
+      console.log(response);
+      alert("Usuario creado correctamente.");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
+
+export async function login(email: string, password: string): Promise<Token> {
+  const res = (
+    await axios.post(backendUrl + "/auth/login", {
+    email: email,
+    password: password
+  })
+  ).data as Token
+
+  setCurrentToken(res.token);
+  updateSessionToken(res.token);
+  void reloadCurrentUser(email, password).then()
+  return res;
+}
+
+if (getCurrentToken()) {
+  const currentUser = getCurrentUser()
+  const currentToken = getCurrentToken()
+  if (currentUser !== undefined && currentToken !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    axios.defaults.headers.common.Authorization = "bearer " + currentToken
+    updateSessionToken(currentToken)
+    updateSessionUser(currentUser)
+  }
+}
