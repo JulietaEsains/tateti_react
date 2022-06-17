@@ -34,7 +34,6 @@ export default function Game() {
 
     const handleCellClick = (i) => {
         if (canPlay) {
-            console.log(cells)
             const currentCells = cells.slice();
 
             // No se puede clickear sobre una celda si el juego ha terminado (termina cuando calculateWinner encuentra a un ganador o cuando detecta empate) o si ya tiene texto 
@@ -50,7 +49,7 @@ export default function Game() {
             setCells(currentCells);
 
             // Se cambia de turno
-            setXIsNext(!xIsNext)
+            setXIsNext(!xIsNext);
         }
     }
     

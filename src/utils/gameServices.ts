@@ -31,17 +31,17 @@ export async function getCurrentPlayer(userId: string): Promise<User> {
 
 export async function updateCurrentGame(index, value, gameId) {
     await axios.patch(backendUrl + "/games/" + gameId, {
-        params: {
-            game: {
-              cell: {
-                index: index,
-                value: value
-              },
-              over: false
-            }
+        game: {
+            cell: {
+              index: index,
+              value: value
+            },
+            over: false
         }
     })
     .then(function (response) {
         console.log(response);
     });
 }
+
+// join game
