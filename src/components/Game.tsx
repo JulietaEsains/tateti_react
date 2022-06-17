@@ -3,7 +3,8 @@ import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
-import { newGame } from "../utils/gameServices.ts";
+import { newGame, updateCurrentGame } from "../utils/gameServices.ts";
+
 
 export default function Game() {
     const [gameStarted, setGameStarted] = useState(false);
@@ -16,8 +17,12 @@ export default function Game() {
         setGameStarted(true);
 
         newGame().then(function (response) {
+
             setGameNumberOutput(response.game.id);
+            setCells(JSON.parse(response.game.cells));
+
         });
+
     }
 
     const handleJoinGameClick = () => {
@@ -29,10 +34,11 @@ export default function Game() {
 
     const handleCellClick = (i) => {
         if (gameStarted) {
+            console.log(cells)
             const currentCells = cells.slice();
 
             // No se puede clickear sobre una celda si el juego ha terminado (termina cuando calculateWinner encuentra a un ganador o cuando detecta empate) o si ya tiene texto 
-            if (calculateWinner(currentCells) ||    currentCells[i]) { 
+            if (calculateWinner(currentCells) || currentCells[i]) { 
                 return;
             }
         
@@ -40,6 +46,7 @@ export default function Game() {
             currentCells[i] = xIsNext ? 'X' : 'O';
 
             // Se actualiza el estado del tablero 
+            updateCurrentGame(i, currentCells[i], gameNumberOutput);
             setCells(currentCells);
 
             // Se cambia de turno

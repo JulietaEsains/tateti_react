@@ -81,3 +81,8 @@ export function updateSessionGame(game: Game) {
   currentGame = game;
   gameSubject.next(currentGame);
 }
+
+export function cleanupSessionGame() {
+  currentGame = undefined;
+  gameSubject.next(currentGame);
+}
