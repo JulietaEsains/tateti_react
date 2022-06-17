@@ -10,13 +10,13 @@ export default function Info(props) {
     const [playerXUsername, setPlayerXUsername] = useState("en espera");
     const [playerOUsername, setPlayerOUsername] = useState("en espera");
 
-    const currentGame = JSON.parse(localStorage.getItem("game") || "{}")
+    const currentGame = JSON.parse(localStorage.getItem("game") || "{}");
 
     useEffect(() => {
         let newStatus;
         
-        setPlayerXId(currentGame.game.player_x_id)
-        setPlayerOId(currentGame.game.player_o_id)
+        setPlayerXId(currentGame.game.player_x_id);
+        setPlayerOId(currentGame.game.player_o_id);
 
         if (playerXId) {
             getCurrentPlayer(playerXId).then(function (response) {

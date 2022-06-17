@@ -7,14 +7,14 @@ import { newGame, updateCurrentGame } from "../utils/gameServices.ts";
 
 
 export default function Game() {
-    const [gameStarted, setGameStarted] = useState(false);
+    const [canPlay, setCanPlay] = useState(false);
     const [gameNumberInput, setGameNumberInput] = useState("");
     const [gameNumberOutput, setGameNumberOutput] = useState("");
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
 
     const handleNewGameClick = () => {
-        setGameStarted(true);
+        setCanPlay(true);
 
         newGame().then(function (response) {
 
@@ -33,7 +33,7 @@ export default function Game() {
     }
 
     const handleCellClick = (i) => {
-        if (gameStarted) {
+        if (canPlay) {
             console.log(cells)
             const currentCells = cells.slice();
 
