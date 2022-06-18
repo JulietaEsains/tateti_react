@@ -15,7 +15,12 @@ export default function Login() {
             return;
         }
 
-        await login(email, password);
+        try {
+            await login(email, password);
+        } catch (err) {
+            alert("Credenciales incorrectas. Intente nuevamente.")
+            throw err;
+        }
     }
 
     return(

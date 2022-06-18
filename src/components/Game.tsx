@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
-import { newGame, updateCurrentGame } from "../utils/gameServices.ts";
+import { newGame, updateCurrentGame, joinGame } from "../utils/gameServices.ts";
 
 
 export default function Game() {
@@ -12,6 +12,10 @@ export default function Game() {
     const [gameNumberOutput, setGameNumberOutput] = useState("");
     const [cells, setCells] = useState(Array(9).fill(null));
     const [xIsNext, setXIsNext] = useState(true);
+
+    /*useEffect(() => {
+        localStorage.clear();
+    }, []);*/
 
     const handleNewGameClick = () => {
         setCanPlay(true);
@@ -30,6 +34,17 @@ export default function Game() {
             alert("Por favor ingresa un número de partida para unirte a una.");
             return;
         }
+
+        setCanPlay(true);
+
+        setGameNumberOutput(gameNumberInput);
+
+        joinGame(gameNumberInput).then(function (response) {
+
+            setGameNumberOutput(response.game.id);
+            setCells(JSON.parse(response.game.cells));
+
+        });
     }
 
     const handleCellClick = (i) => {
@@ -50,6 +65,8 @@ export default function Game() {
 
             // Se cambia de turno
             setXIsNext(!xIsNext);
+
+            setCanPlay(false);
         }
     }
     

@@ -16,7 +16,7 @@ export interface Game {
 }
 
 export async function newGame(): Promise<Game> {
-    const res = (await axios.post(backendUrl + "/games", {})).data as Game;
+    const res = (await axios.post(`${backendUrl}/games`, {})).data as Game;
 
     localStorage.setItem("game", JSON.stringify(res));
     updateSessionGame(res);
@@ -25,12 +25,13 @@ export async function newGame(): Promise<Game> {
 }
 
 export async function getCurrentPlayer(userId: string): Promise<User> {
-    const res = (await axios.get(backendUrl + "/users/" + userId, {})).data as User;
-    return res;
+
+    return (await axios.get(`${backendUrl}/users/${userId}`, {})).data as User;
+
 }
 
 export async function updateCurrentGame(index, value, gameId) {
-    await axios.patch(backendUrl + "/games/" + gameId, {
+    await axios.patch(`${backendUrl}/games/${gameId}`, {
         game: {
             cell: {
               index: index,
@@ -44,4 +45,12 @@ export async function updateCurrentGame(index, value, gameId) {
     });
 }
 
-// join game
+export async function joinGame(gameId): Promise<Game> {
+
+    const res = (await axios.patch(`${backendUrl}/games/${gameId}`, {})).data as Game;
+
+    localStorage.setItem("game", JSON.stringify(res));
+    updateSessionGame(res);
+
+    return res;
+}

@@ -27,7 +27,7 @@ function getCurrentToken(): string | undefined {
 function setCurrentToken(token: string) {
   localStorage.setItem("token", token)
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  axios.defaults.headers.common.Authorization = "bearer " + token
+  axios.defaults.headers.common.Authorization = `bearer ${token}`;
 }
 
 function getCurrentUser(): User | undefined {
@@ -45,25 +45,22 @@ export async function logout(): Promise<void> {
   cleanupSessionUser()
 }
 
-export async function reloadCurrentUser(email: string, password: string): Promise<User> {
+export async function reloadCurrentUser(email: string): Promise<User> {
   try {
-    const res = (await axios.get(backendUrl + "/users", {
-      params: {
-        email: email,
-        password: password
-      }
-    })).data as User
+    const res = (await axios.get(`${backendUrl}/users`, {})).data.users;
 
-    localStorage.setItem("user", JSON.stringify(res));
-    updateSessionUser(res);
+    const currentUser = (res.filter(user => user.email === email)) as User;
 
-    return res;
+    localStorage.setItem("user", JSON.stringify(currentUser));
+    updateSessionUser(currentUser);
+
+    return currentUser;
 
   } catch (err) {
     const axiosError = err as AxiosError
 
     if (axiosError.response && axiosError.response.status === 401) {
-      void logout()
+      void logout();
     }
     
     throw err
@@ -71,7 +68,7 @@ export async function reloadCurrentUser(email: string, password: string): Promis
 }
 
 export async function createUser(name: string, username: string, email: string, password: string) {
-    await axios.post(backendUrl + "/users", {
+    await axios.post(`${backendUrl}/users`, {
       name: name,
       username: username,
       email: email,
@@ -88,7 +85,7 @@ export async function createUser(name: string, username: string, email: string, 
 
 export async function login(email: string, password: string): Promise<Token> {
   const res = (
-    await axios.post(backendUrl + "/auth/login", {
+    await axios.post(`${backendUrl}/auth/login`, {
     email: email,
     password: password
   })
@@ -97,17 +94,17 @@ export async function login(email: string, password: string): Promise<Token> {
   setCurrentToken(res.token);
   updateSessionToken(res.token);
   alert("Sesión iniciada, ahora podés jugar.");
-  void reloadCurrentUser(email, password).then()
+  void reloadCurrentUser(email).then()
   return res;
 }
 
 if (getCurrentToken()) {
-  const currentUser = getCurrentUser()
-  const currentToken = getCurrentToken()
+  const currentUser = getCurrentUser();
+  const currentToken = getCurrentToken();
   if (currentUser !== undefined && currentToken !== undefined) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    axios.defaults.headers.common.Authorization = "bearer " + currentToken
-    updateSessionToken(currentToken)
-    updateSessionUser(currentUser)
+    axios.defaults.headers.common.Authorization = `bearer ${currentToken}`;
+    updateSessionToken(currentToken);
+    updateSessionUser(currentUser);
   }
 }
