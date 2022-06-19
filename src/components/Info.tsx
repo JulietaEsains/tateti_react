@@ -1,46 +1,48 @@
 import { useEffect, useState } from "react";
 import calculateWinner from "../utils/calculateWinner.ts";
-import { getCurrentPlayer } from "../utils/gameServices.ts";
+import { getCurrentGame, getPlayer } from "../utils/gameServices.ts";
 import Input from "./Input.tsx";
 
 export default function Info(props) {
     const [status, setStatus] = useState("");
-    const [playerXId, setPlayerXId] = useState("");
-    const [playerOId, setPlayerOId] = useState("");
-    const [playerXUsername, setPlayerXUsername] = useState("en espera");
-    const [playerOUsername, setPlayerOUsername] = useState("en espera");
+    const [currentPlayersId, setCurrentPlayersId] = useState("");
+    const [otherPlayersId, setOtherPlayersId] = useState("");
+    const [currentPlayersUsername, setCurrentPlayersUsername] = useState("en espera");
+    const [otherPlayersUsername, setOtherPlayersUsername] = useState("en espera");
+
+    //const currentGame = JSON.parse(localStorage.getItem("game") || "{}");
 
     useEffect(() => {
         let newStatus;
-        let currentGame;
-
-        setInterval(() => {
-
-            currentGame = JSON.parse(localStorage.getItem("game") || "{}");
-
-        }, 1000);
         
         if (props.gameNumberOutput) {
+            getCurrentGame(props.gameNumberOutput).then(function (response) {
 
-            setPlayerXId(currentGame.game.player_x_id);
-            setPlayerOId(currentGame.game.player_o_id);
+                if (props.currentPlayersSymbol === "X") {
 
+                    setCurrentPlayersId(response.game.player_x_id);
+                    setOtherPlayersId(response.game.player_o_id);
+
+                } else if (props.currentPlayersSymbol === "O") {
+
+                    setCurrentPlayersId(response.game.player_o_id);
+                    setOtherPlayersId(response.game.player_x_id);
+
+                }
+                
+            });
         }
 
-        if (playerXId) {
-
-            getCurrentPlayer(playerXId).then(function (response) {
-                setPlayerXUsername(response.user.username);
+        if (currentPlayersId) {
+            getPlayer(currentPlayersId).then(function (response) {
+                setCurrentPlayersUsername(response.user.username);
             });
-
         } 
 
-        if (playerOId) {
-
-            getCurrentPlayer(playerOId).then(function (response) {
-                setPlayerOUsername(response.user.username);
+        if (otherPlayersId) {
+            getPlayer(otherPlayersId).then(function (response) {
+                setOtherPlayersUsername(response.user.username);
             });
-
         }
 
         // En cada renderización averiguamos si alguien ganó, si hay empate o si se sigue jugando
@@ -48,23 +50,19 @@ export default function Info(props) {
 
         // Si el juego ha terminado
         if (winner) {
-            // Si el ganador es X, muestra "Ganador: X (nombreX)"
             if (winner === 'X') {
-                newStatus = `Ganador: X (${playerXUsername})`;
+                newStatus = `Ganador: X`;
             } else if (winner === 'O') {
-                // Si el ganador es O, muestra "Ganador: O (nombreO)"
-                newStatus = `Ganador: O (${playerOUsername})`;
+                newStatus = `Ganador: O`;
             } else newStatus = `Ganador: ${winner}`;
+
+            props.gameOver = true;
         } else {
-            // Si es el turno de X, muestra 
-            // "Próximo jugador: X (nombreX)", 
-            // sino "Próximo jugador: O (nombreO)"
-            newStatus = `Próximo jugador: 
-                ${(props.xIsNext ? `X (${playerXUsername})` : `O (${playerOUsername})`)}`;
+            newStatus = `Próximo jugador: ${((props.turn === 'X') ? 'X' : 'O')}`;
         }
 
         setStatus(newStatus);
-    }, []); 
+    }, [props, currentPlayersId, otherPlayersId]); 
 
     return (
         <div>
@@ -77,13 +75,22 @@ export default function Info(props) {
                             value = {props.gameNumberInput}
                             onChange = {props.onGameNumberInputChange}
                         />
-                 </label>
+                    </label>
                 </form>
                 <div className="current-game">
                     <h3>Partida actual</h3>
                     <p>
                         Número de partida: {props.gameNumberOutput}
                     </p>
+                    <br />
+                    <p>
+                        Vos: {currentPlayersUsername}
+                    </p>
+                    <br />
+                    <p>
+                        Tu oponente: {otherPlayersUsername}
+                    </p>
+                    <br />
                 </div>
             </div>
             <div className = "status">

@@ -1,73 +1,111 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
-import { newGame, updateCurrentGame, joinGame } from "../utils/gameServices.ts";
-
+import { newGame, getCurrentGame, updateCurrentGame, joinGame } from "../utils/gameServices.ts";
 
 export default function Game() {
-    const [canPlay, setCanPlay] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
     const [gameNumberInput, setGameNumberInput] = useState("");
     const [gameNumberOutput, setGameNumberOutput] = useState("");
+    const [currentPlayersSymbol, setCurrentPlayersSymbol] = useState("");
+    const [otherPlayersSymbol, setOtherPlayersSymbol] = useState("");
     const [cells, setCells] = useState(Array(9).fill(null));
-    const [xIsNext, setXIsNext] = useState(true);
+    const [turn, setTurn] = useState("X");
 
-    /*useEffect(() => {
-        localStorage.clear();
-    }, []);*/
+    let gameId = "";
+
+    const checkBoardStatus = () => {
+        setInterval(() => {
+            if (!gameOver) {
+                getCurrentGame(gameId).then(function (response) {
+                    console.log(response)
+                    setTurn(response.game.turn);
+                    setCells(JSON.parse(response.game.cells));
+                });
+            }
+        }, 1000);
+    }
+
+    // DESPUÉS BORRAR
+    const mostrarInfoParaDebuggear = () => {
+        console.log(`game over: ${gameOver}`);
+        console.log(`game number input: ${gameNumberInput}`);
+        console.log(`game number output: ${gameNumberOutput}`);
+        console.log(`current player's symbol: ${currentPlayersSymbol}`);
+        console.log(`other player's symbol: ${otherPlayersSymbol}`);
+        console.log(`cells: ${cells}`);
+        console.log(`turn: ${turn}`);
+    }
+    // DESPUÉS BORRAR LO DE ARRIBA
 
     const handleNewGameClick = () => {
-        setCanPlay(true);
+        mostrarInfoParaDebuggear();
 
         newGame().then(function (response) {
-
-            setGameNumberOutput(response.game.id);
+            gameId = response.game.id;
+            setGameNumberOutput(gameId);
             setCells(JSON.parse(response.game.cells));
-
         });
 
+        setCurrentPlayersSymbol("X");
+        setOtherPlayersSymbol("O");
+        setTurn("X");
+        setGameOver(false);
+
+        checkBoardStatus();
+        mostrarInfoParaDebuggear();
     }
 
     const handleJoinGameClick = () => {
+        mostrarInfoParaDebuggear();
+        
         if (!gameNumberInput) {
             alert("Por favor ingresa un número de partida para unirte a una.");
             return;
         }
 
-        setCanPlay(true);
-
-        setGameNumberOutput(gameNumberInput);
+        gameId = gameNumberInput;
 
         joinGame(gameNumberInput).then(function (response) {
-
-            setGameNumberOutput(response.game.id);
+            gameId = response.game.id;
+            setGameNumberOutput(gameId);
             setCells(JSON.parse(response.game.cells));
-
+            setTurn(response.game.turn);
         });
+
+        setCurrentPlayersSymbol("O");
+        setOtherPlayersSymbol("X");
+        setGameOver(false);
+
+        checkBoardStatus();
+
+        mostrarInfoParaDebuggear();
     }
 
     const handleCellClick = (i) => {
-        if (canPlay) {
-            const currentCells = cells.slice();
+        let currentCells = cells.slice();
 
-            // No se puede clickear sobre una celda si el juego ha terminado (termina cuando calculateWinner encuentra a un ganador o cuando detecta empate) o si ya tiene texto 
-            if (calculateWinner(currentCells) || currentCells[i]) { 
-                return;
-            }
-        
-            // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al turno
-            currentCells[i] = xIsNext ? 'X' : 'O';
-
-            // Se actualiza el estado del tablero 
-            updateCurrentGame(i, currentCells[i], gameNumberOutput);
-            setCells(currentCells);
-
-            // Se cambia de turno
-            setXIsNext(!xIsNext);
-
-            setCanPlay(false);
+        // No se puede clickear sobre una celda si el juego ha terminado (cuando calculateWinner encuentra a un ganador o detecta empate), si ya tiene texto o si no es el turno del jugador actual
+        if (calculateWinner(currentCells) || currentCells[i] || turn !== currentPlayersSymbol) { 
+            return;
         }
+        
+        // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al turno
+        currentCells[i] = currentPlayersSymbol;
+
+        // Se cambia de turno
+        setTurn((turn === 'X') ? 'O' : 'X');
+
+        // Se actualiza el estado de juego 
+        updateCurrentGame(i, currentPlayersSymbol, turn, gameNumberOutput).then(function (response) {
+            console.log(response);
+            currentCells = JSON.parse(response.game.cells);
+        });
+        setCells(currentCells);
+
+        mostrarInfoParaDebuggear();
     }
     
     return (
@@ -77,12 +115,14 @@ export default function Game() {
                 gameNumberInput = {gameNumberInput}
                 onGameNumberInputChange = {(event) => setGameNumberInput(event.target.value)}
                 gameNumberOutput = {gameNumberOutput}
+                currentPlayersSymbol = {currentPlayersSymbol}
+                otherPlayersSymbol = {otherPlayersSymbol}
                 cells = {cells}
-                xIsNext = {xIsNext}
+                turn = {turn}
             />
             <Board 
                 cells = {cells}
-                xIsNext = {xIsNext}
+                turn = {turn}
                 onCellClick = {handleCellClick}
             />
         </div>

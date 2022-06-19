@@ -1,6 +1,6 @@
 import axios from "axios";
 import { updateSessionGame } from "./store.ts";
-import { User } from "./userServices";
+import { User } from "./userServices.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 axios.defaults.headers.common["Content-Type"] = "application/json"
@@ -13,6 +13,7 @@ export interface Game {
     player_o_id: string
     over: string
     cells: string[]
+    turn: string
 }
 
 export async function newGame(): Promise<Game> {
@@ -24,25 +25,29 @@ export async function newGame(): Promise<Game> {
     return res;
 }
 
-export async function getCurrentPlayer(userId: string): Promise<User> {
+export async function getCurrentGame(gameId: string): Promise<Game> {
+
+    return (await axios.get(`${backendUrl}/games/${gameId}`, {})).data as Game;
+
+}
+
+export async function getPlayer(userId: string): Promise<User> {
 
     return (await axios.get(`${backendUrl}/users/${userId}`, {})).data as User;
 
 }
 
-export async function updateCurrentGame(index, value, gameId) {
-    await axios.patch(`${backendUrl}/games/${gameId}`, {
+export async function updateCurrentGame(index, value, turn, gameId): Promise<Game> {
+    return (await axios.patch(`${backendUrl}/games/${gameId}`, {
         game: {
             cell: {
               index: index,
               value: value
             },
-            over: false
+            over: false,
+            turn: turn
         }
-    })
-    .then(function (response) {
-        console.log(response);
-    });
+    })).data as Game;
 }
 
 export async function joinGame(gameId): Promise<Game> {
