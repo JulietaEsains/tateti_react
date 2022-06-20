@@ -37,7 +37,8 @@ export async function getPlayer(userId: string): Promise<User> {
 
 }
 
-export async function updateCurrentGame(index, value, turn, gameId): Promise<Game> {
+export async function updateCurrentGame
+    (index: number, value: string, turn: string, gameId: string): Promise<Game> {
     return (await axios.patch(`${backendUrl}/games/${gameId}`, {
         game: {
             cell: {
@@ -50,7 +51,7 @@ export async function updateCurrentGame(index, value, turn, gameId): Promise<Gam
     })).data as Game;
 }
 
-export async function joinGame(gameId): Promise<Game> {
+export async function joinGame(gameId: string): Promise<Game> {
 
     const res = (await axios.patch(`${backendUrl}/games/${gameId}`, {})).data as Game;
 
@@ -58,4 +59,18 @@ export async function joinGame(gameId): Promise<Game> {
     updateSessionGame(res);
 
     return res;
+}
+
+export async function finishGame
+    (index: number, value: string, turn: string, gameId: string): Promise<Game> {
+    return (await axios.patch(`${backendUrl}/games/${gameId}`, {
+        game: {
+            cell: {
+              index: index,
+              value: value
+            },
+            over: true,
+            turn: turn
+        }
+    })).data as Game;
 }

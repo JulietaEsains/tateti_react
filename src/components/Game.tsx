@@ -3,7 +3,7 @@ import Info from "./Info.tsx";
 import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
-import { newGame, getCurrentGame, updateCurrentGame, joinGame } from "../utils/gameServices.ts";
+import { newGame, getCurrentGame, updateCurrentGame, joinGame, finishGame } from "../utils/gameServices.ts";
 
 export default function Game() {
     const [gameOver, setGameOver] = useState(false);
@@ -16,79 +16,75 @@ export default function Game() {
 
     let gameId = "";
 
+    const initializeState = () => {
+        setGameOver(false);
+        setGameNumberInput("");
+        setGameNumberOutput("");
+        setCurrentPlayersSymbol("");
+        setOtherPlayersSymbol("");
+        setCells(new Array(9).fill(null));
+        setTurn("X");
+        gameId = "";
+    }
+
     const checkBoardStatus = () => {
-        setInterval(() => {
+        let interval = setInterval(() => {
             if (!gameOver) {
                 getCurrentGame(gameId).then(function (response) {
-                    console.log(response)
                     setTurn(response.game.turn);
-                    setCells(JSON.parse(response.game.cells));
+                    setCells(response.game.cells);
                 });
-            }
+            } else clearInterval(interval);
         }, 1000);
     }
 
-    // DESPUÉS BORRAR
-    const mostrarInfoParaDebuggear = () => {
-        console.log(`game over: ${gameOver}`);
-        console.log(`game number input: ${gameNumberInput}`);
-        console.log(`game number output: ${gameNumberOutput}`);
-        console.log(`current player's symbol: ${currentPlayersSymbol}`);
-        console.log(`other player's symbol: ${otherPlayersSymbol}`);
-        console.log(`cells: ${cells}`);
-        console.log(`turn: ${turn}`);
-    }
-    // DESPUÉS BORRAR LO DE ARRIBA
-
     const handleNewGameClick = () => {
-        mostrarInfoParaDebuggear();
+        initializeState();
 
         newGame().then(function (response) {
+            console.log(response);
             gameId = response.game.id;
             setGameNumberOutput(gameId);
-            setCells(JSON.parse(response.game.cells));
+            setCells(response.game.cells);
+            setTurn(response.game.turn);
+            setCurrentPlayersSymbol("X");
+            setOtherPlayersSymbol("O");
+            setGameOver(false);
         });
 
-        setCurrentPlayersSymbol("X");
-        setOtherPlayersSymbol("O");
-        setTurn("X");
-        setGameOver(false);
-
         checkBoardStatus();
-        mostrarInfoParaDebuggear();
     }
 
-    const handleJoinGameClick = () => {
-        mostrarInfoParaDebuggear();
-        
+    const handleJoinGameClick = () => {      
         if (!gameNumberInput) {
             alert("Por favor ingresa un número de partida para unirte a una.");
             return;
         }
 
+        initializeState();
+
         gameId = gameNumberInput;
 
-        joinGame(gameNumberInput).then(function (response) {
+        joinGame(gameId).then(function (response) {
+            console.log(response);
             gameId = response.game.id;
             setGameNumberOutput(gameId);
-            setCells(JSON.parse(response.game.cells));
+            setCells(response.game.cells);
             setTurn(response.game.turn);
+            setCurrentPlayersSymbol("O");
+            setOtherPlayersSymbol("X");
+            setGameOver(false);
         });
 
-        setCurrentPlayersSymbol("O");
-        setOtherPlayersSymbol("X");
-        setGameOver(false);
-
         checkBoardStatus();
-
-        mostrarInfoParaDebuggear();
     }
 
     const handleCellClick = (i) => {
         let currentCells = cells.slice();
+        let currentTurn = turn;
 
         // No se puede clickear sobre una celda si el juego ha terminado (cuando calculateWinner encuentra a un ganador o detecta empate), si ya tiene texto o si no es el turno del jugador actual
-        if (calculateWinner(currentCells) || currentCells[i] || turn !== currentPlayersSymbol) { 
+        if (calculateWinner(currentCells) || currentCells[i] || currentTurn !== currentPlayersSymbol) { 
             return;
         }
         
@@ -96,16 +92,26 @@ export default function Game() {
         currentCells[i] = currentPlayersSymbol;
 
         // Se cambia de turno
-        setTurn((turn === 'X') ? 'O' : 'X');
+        currentTurn = (currentTurn === 'X') ? 'O' : 'X';
 
         // Se actualiza el estado de juego 
-        updateCurrentGame(i, currentPlayersSymbol, turn, gameNumberOutput).then(function (response) {
+        updateCurrentGame(i, currentPlayersSymbol, currentTurn, gameNumberOutput)
+        .then(function (response) {
             console.log(response);
-            currentCells = JSON.parse(response.game.cells);
+            console.log(response.game)
+            console.log(response.game.cells);
+            currentCells = response.game.cells;
+            setCells(currentCells);
+            currentTurn = response.game.turn;
+            setTurn(currentTurn);
         });
-        setCells(currentCells);
 
-        mostrarInfoParaDebuggear();
+        if (calculateWinner(cells)) {
+            finishGame(i, currentPlayersSymbol, turn, gameNumberOutput).then(function (response) {
+                console.log(response);
+                setGameOver(response.game.over);
+            });
+        }
     }
     
     return (

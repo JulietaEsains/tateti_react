@@ -55,8 +55,6 @@ export default function Info(props) {
             } else if (winner === 'O') {
                 newStatus = `Ganador: O`;
             } else newStatus = `Ganador: ${winner}`;
-
-            props.gameOver = true;
         } else {
             newStatus = `Próximo jugador: ${((props.turn === 'X') ? 'X' : 'O')}`;
         }
@@ -84,11 +82,11 @@ export default function Info(props) {
                     </p>
                     <br />
                     <p>
-                        Vos: {currentPlayersUsername}
+                        Vos: {currentPlayersUsername} ({props.currentPlayersSymbol})
                     </p>
                     <br />
                     <p>
-                        Tu oponente: {otherPlayersUsername}
+                        Tu oponente: {otherPlayersUsername} ({props.otherPlayersSymbol})
                     </p>
                     <br />
                 </div>
