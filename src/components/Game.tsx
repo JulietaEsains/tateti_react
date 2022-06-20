@@ -7,16 +7,30 @@ import { newGame, getCurrentGame, updateCurrentGame, joinGame, finishGame } from
 import { Link } from "react-router-dom";
 
 export default function Game() {
+    // controla si la partida actual ha terminado
     const [gameOver, setGameOver] = useState(false);
+
+    // valor del input donde se ingresa el número (id) de partida para unirse
     const [gameNumberInput, setGameNumberInput] = useState("");
+
+    // label donde aparece el número (id) de la partida actual
     const [gameNumberOutput, setGameNumberOutput] = useState("");
+
+    // símbolo (X/O) del jugador de este browser
     const [currentPlayersSymbol, setCurrentPlayersSymbol] = useState("");
+
+    // símbolo (X/O) del jugador del otro browser
     const [otherPlayersSymbol, setOtherPlayersSymbol] = useState("");
+
+    // arreglo que representa las 9 celdas del tablero
     const [cells, setCells] = useState(Array(9).fill(null));
+
+    // turno actual (X/O)
     const [turn, setTurn] = useState("X");
 
     let gameId = "";
 
+    // verifica cada segundo el turno y el tablero de la partida actual
     const checkBoardStatus = () => {
         let interval = setInterval(() => {
             if (!gameOver) {
@@ -28,12 +42,15 @@ export default function Game() {
         }, 1000);
     }
 
+    // Nueva partida
     const handleNewGameClick = () => {
+        // que gameNumberOutput tenga un valor implica que ya se estaba jugando en este browser
         if (gameNumberOutput) {
             alert("Debes reiniciar antes de comenzar una nueva partida");
             return;
         }
 
+        // creación de la partida 
         newGame().then(function (response) {
             console.log(response);
             gameId = response.game.id;
@@ -48,6 +65,7 @@ export default function Game() {
         checkBoardStatus();
     }
 
+    // Unirse a una partida existente
     const handleJoinGameClick = () => {      
         if (gameNumberOutput) {
             alert("Debes reiniciar antes de unirte a una nueva partida");
@@ -61,6 +79,7 @@ export default function Game() {
 
         gameId = gameNumberInput;
 
+        // Actualización de la partida existente
         try {
             joinGame(gameId).then(function (response) {
                 console.log(response);
@@ -80,6 +99,7 @@ export default function Game() {
         checkBoardStatus();
     }
 
+    // Se hace click en una celda
     const handleCellClick = (i) => {
         let currentCells = cells.slice();
         let currentTurn = turn;
@@ -89,7 +109,7 @@ export default function Game() {
             return;
         }
         
-        // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al turno
+        // Si es posible clickear, se coloca el símbolo en el cuadrado de acuerdo al jugador
         currentCells[i] = currentPlayersSymbol;
 
         // Se cambia de turno
@@ -99,14 +119,13 @@ export default function Game() {
         updateCurrentGame(i, currentPlayersSymbol, currentTurn, gameNumberOutput)
         .then(function (response) {
             console.log(response);
-            console.log(response.game)
-            console.log(response.game.cells);
             currentCells = response.game.cells;
             setCells(currentCells);
             currentTurn = response.game.turn;
             setTurn(currentTurn);
         });
 
+        // En caso de que este click lleve al fin del juego
         if (calculateWinner(cells)) {
             finishGame(i, currentPlayersSymbol, turn, gameNumberOutput).then(function (response) {
                 console.log(response);

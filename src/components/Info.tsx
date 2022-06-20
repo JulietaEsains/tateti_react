@@ -4,7 +4,10 @@ import { getCurrentGame, getPlayer } from "../utils/gameServices.ts";
 import Input from "./Input.tsx";
 
 export default function Info(props) {
+    // muestra a quién le toca o cómo terminó la partida
     const [status, setStatus] = useState("");
+
+    // datos del jugador de este browser y del otro browser
     const [currentPlayersId, setCurrentPlayersId] = useState("");
     const [otherPlayersId, setOtherPlayersId] = useState("");
     const [currentPlayersUsername, setCurrentPlayersUsername] = useState("en espera");
@@ -13,6 +16,7 @@ export default function Info(props) {
     useEffect(() => {
         let newStatus;
         
+        // se si está dentro de una partida, se busca mostrar los nombres de usuario de los jugadores
         if (props.gameNumberOutput) {
             getCurrentGame(props.gameNumberOutput).then(function (response) {
 

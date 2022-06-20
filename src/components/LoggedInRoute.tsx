@@ -5,7 +5,8 @@ import { useSessionToken } from "../utils/store.ts";
 interface PropType {
     component: React.FC;
 }
-  
+
+// permite que se renderice el componente Game sólo si hay un usuario válido logueado
 export const StateLoggedInRoute: FC<PropType> = ({component: Component}) => {
     const token = useSessionToken();
   

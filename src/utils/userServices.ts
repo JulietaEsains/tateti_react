@@ -45,6 +45,7 @@ export async function logout(): Promise<void> {
   cleanupSessionUser()
 }
 
+// actualizar el usuario almacenado en local storage dado el email ingresado en el login
 export async function reloadCurrentUser(email: string): Promise<User> {
   try {
     const res = (await axios.get(`${backendUrl}/users`, {})).data.users;
