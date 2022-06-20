@@ -81,6 +81,7 @@ input {
 .links-container {
     display: flex;
     justify-content: space-evenly;
+    align-content: center;
 }
 
 .btn-confirm {
@@ -89,11 +90,13 @@ input {
 
 .btn {
     color: #272727;
+    height: max-content;
     font-weight: medium;
     background-color: rgb(148, 243, 247);
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 25px;
 }
 
 .btn:hover {

@@ -10,8 +10,6 @@ export default function Info(props) {
     const [currentPlayersUsername, setCurrentPlayersUsername] = useState("en espera");
     const [otherPlayersUsername, setOtherPlayersUsername] = useState("en espera");
 
-    //const currentGame = JSON.parse(localStorage.getItem("game") || "{}");
-
     useEffect(() => {
         let newStatus;
         

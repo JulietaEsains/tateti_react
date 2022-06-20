@@ -4,6 +4,7 @@ import Board from "./Board.tsx";
 import Button from "./Button.tsx";
 import calculateWinner from "../utils/calculateWinner.ts";
 import { newGame, getCurrentGame, updateCurrentGame, joinGame, finishGame } from "../utils/gameServices.ts";
+import { Link } from "react-router-dom";
 
 export default function Game() {
     const [gameOver, setGameOver] = useState(false);
@@ -15,17 +16,6 @@ export default function Game() {
     const [turn, setTurn] = useState("X");
 
     let gameId = "";
-
-    const initializeState = () => {
-        setGameOver(false);
-        setGameNumberInput("");
-        setGameNumberOutput("");
-        setCurrentPlayersSymbol("");
-        setOtherPlayersSymbol("");
-        setCells(new Array(9).fill(null));
-        setTurn("X");
-        gameId = "";
-    }
 
     const checkBoardStatus = () => {
         let interval = setInterval(() => {
@@ -39,7 +29,10 @@ export default function Game() {
     }
 
     const handleNewGameClick = () => {
-        initializeState();
+        if (gameNumberOutput) {
+            alert("Debes reiniciar antes de comenzar una nueva partida");
+            return;
+        }
 
         newGame().then(function (response) {
             console.log(response);
@@ -56,25 +49,33 @@ export default function Game() {
     }
 
     const handleJoinGameClick = () => {      
+        if (gameNumberOutput) {
+            alert("Debes reiniciar antes de unirte a una nueva partida");
+            return;
+        }
+
         if (!gameNumberInput) {
             alert("Por favor ingresa un número de partida para unirte a una.");
             return;
         }
 
-        initializeState();
-
         gameId = gameNumberInput;
 
-        joinGame(gameId).then(function (response) {
-            console.log(response);
-            gameId = response.game.id;
-            setGameNumberOutput(gameId);
-            setCells(response.game.cells);
-            setTurn(response.game.turn);
-            setCurrentPlayersSymbol("O");
-            setOtherPlayersSymbol("X");
-            setGameOver(false);
-        });
+        try {
+            joinGame(gameId).then(function (response) {
+                console.log(response);
+                gameId = response.game.id;
+                setGameNumberOutput(gameId);
+                setCells(response.game.cells);
+                setTurn(response.game.turn);
+                setCurrentPlayersSymbol("O");
+                setOtherPlayersSymbol("X");
+                setGameOver(false);
+            });
+        } catch (err) {
+            alert("No existe partida con ese número. Intente nuevamente.")
+            throw err;
+        } 
 
         checkBoardStatus();
     }
@@ -141,6 +142,13 @@ export default function Game() {
                 value = "Unirse a partida"
                 onClick = {handleJoinGameClick}
             />
+            <Link 
+                to="/login" 
+                className="link"
+                onClick = {() => localStorage.clear()}
+            >
+                Reiniciar
+            </Link>
         </div>
         </>
     );
